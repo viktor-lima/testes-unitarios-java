@@ -7,14 +7,22 @@ import java.util.Date;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
+import br.ce.vkl.exceptions.MoveWithoutStockException;
+import br.ce.vkl.exceptions.RentException;
 
 public class LocacaoService {
 	
-	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
+	public Locacao alugarFilme(Usuario usuario, Filme filme) throws MoveWithoutStockException, RentException  {
 		
-		if(filme.getEstoque() == 0) {
-			throw new Exception("Filme sem estoque");
-		}
+		if(usuario == null)
+			throw new RentException("Usuario vazio");
+		
+		if(filme == null)
+			throw new RentException("Filme vazio");
+		
+		if(filme.getEstoque() == 0) 
+			throw new MoveWithoutStockException();
+		
 		
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filme);

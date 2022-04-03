@@ -14,6 +14,8 @@ import org.junit.rules.ExpectedException;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
+import br.ce.vkl.exceptions.MoveWithoutStockException;
+import br.ce.vkl.exceptions.RentException;
 import br.ce.vkl.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -40,7 +42,7 @@ public class LocacaoServiceTest {
 				is(true));
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = MoveWithoutStockException.class)
 	public void testMovieWithoutStock() throws Exception {
 		// scenery
 		LocacaoService service = new LocacaoService();
@@ -50,59 +52,33 @@ public class LocacaoServiceTest {
 		// action
 		service.alugarFilme(usuario, filme);
 	}
-	
+
 	@Test
-	public void testMovieWithoutStock2() {
+	public void User_isEmpty() throws MoveWithoutStockException {
 		// scenery
 		LocacaoService service = new LocacaoService();
-		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
+		Filme filme = new Filme("Filme 1", 2, 5.0);
 
-		// action
 		try {
-			service.alugarFilme(usuario, filme);
-			fail("Deveria ter lancado uma excecao");
-		} catch (Exception e) {
-			assertThat(e.getMessage(), is("Filme sem estoque"));
+			service.alugarFilme(null, filme);
+			fail();
+		} catch (RentException e) {
+			assertThat(e.getMessage(), is("Usuario vazio"));
 		}
+
 	}
-	
+
 	@Test
-	public void testMovieWithoutStock3() throws Exception {
+	public void Movie_isEmpty() throws MoveWithoutStockException, RentException {
 		// scenery
 		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
-		
-		exception.expect(Exception.class);
-		exception.expectMessage("Filme sem estoque");
 
-		// action
-		service.alugarFilme(usuario, filme);
+		exception.expect(RentException.class);
+		exception.expectMessage("Filme vazio");
 		
-		
+		service.alugarFilme(usuario, null);
+
 	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
