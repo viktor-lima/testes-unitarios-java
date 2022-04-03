@@ -1,10 +1,14 @@
 package br.ce.vkl.servicos;
 
 
+import static br.ce.vkl.utils.DataUtils.isMesmaData;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import br.ce.vkl.entidades.Filme;
@@ -25,8 +29,8 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filme);
 		
 		//verification
-		assertTrue(locacao.getValor() == 5.0);
-		assertTrue(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()));
-		assertTrue(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
+		assertThat(locacao.getValor(), is(5.0));
+		assertThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		assertThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),is(true));
 	}
 }
