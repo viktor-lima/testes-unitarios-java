@@ -1,4 +1,4 @@
-package br.ce.wcaquino.entidades;
+package br.ce.vkl.entidades;
 
 public class Filme {
 
