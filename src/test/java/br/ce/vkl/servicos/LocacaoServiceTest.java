@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -25,12 +27,27 @@ public class LocacaoServiceTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 
+	private LocacaoService service;
+
+	@Before
+	public void setup() {
+		System.out.println("before");
+		service = new LocacaoService();
+	}
+
+	@After
+	public void tearDown() {
+		System.out.println("after");
+	}
+
 	@Test
 	public void testLocacao() throws Exception {
 		// scenery
-		LocacaoService service = new LocacaoService();
+
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
+
+		System.out.println("test");
 
 		// action
 		Locacao locacao = service.alugarFilme(usuario, filme);
@@ -45,7 +62,7 @@ public class LocacaoServiceTest {
 	@Test(expected = MoveWithoutStockException.class)
 	public void testMovieWithoutStock() throws Exception {
 		// scenery
-		LocacaoService service = new LocacaoService();
+
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -56,7 +73,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void User_isEmpty() throws MoveWithoutStockException {
 		// scenery
-		LocacaoService service = new LocacaoService();
+
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 
 		try {
@@ -71,12 +88,12 @@ public class LocacaoServiceTest {
 	@Test
 	public void Movie_isEmpty() throws MoveWithoutStockException, RentException {
 		// scenery
-		LocacaoService service = new LocacaoService();
+
 		Usuario usuario = new Usuario("Usuario 1");
 
 		exception.expect(RentException.class);
 		exception.expectMessage("Filme vazio");
-		
+
 		service.alugarFilme(usuario, null);
 
 	}
