@@ -3,6 +3,7 @@ package br.ce.vkl.servicos;
 import static br.ce.vkl.utils.DataUtils.adicionarDias;
 
 import java.util.Date;
+import java.util.List;
 
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
@@ -12,23 +13,28 @@ import br.ce.vkl.exceptions.RentException;
 
 public class LocacaoService {
 	
-	public Locacao alugarFilme(Usuario usuario, Filme filme) throws MoveWithoutStockException, RentException  {
+	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws MoveWithoutStockException, RentException  {
 		
 		if(usuario == null)
 			throw new RentException("Usuario vazio");
 		
-		if(filme == null)
+		if(filmes == null)
 			throw new RentException("Filme vazio");
 		
-		if(filme.getEstoque() == 0) 
-			throw new MoveWithoutStockException();
-		
+		for(Filme filme : filmes) {
+			if(filme.getEstoque() == 0) 
+				throw new MoveWithoutStockException();
+		}
 		
 		Locacao locacao = new Locacao();
-		locacao.setFilme(filme);
+		locacao.setFilme(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		locacao.setValor(filme.getPrecoLocacao());
+		Double totalValue = 0d;
+		for(Filme filme: filmes) {
+			totalValue = filme.getPrecoLocacao();
+		}
+		locacao.setValor(totalValue);
 
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();

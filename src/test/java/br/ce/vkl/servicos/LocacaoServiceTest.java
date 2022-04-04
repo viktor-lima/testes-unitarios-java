@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,26 +33,20 @@ public class LocacaoServiceTest {
 
 	@Before
 	public void setup() {
-		System.out.println("before");
 		service = new LocacaoService();
 	}
 
-	@After
-	public void tearDown() {
-		System.out.println("after");
-	}
 
 	@Test
 	public void testLocacao() throws Exception {
 		// scenery
 
 		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 2, 5.0);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
-		System.out.println("test");
 
 		// action
-		Locacao locacao = service.alugarFilme(usuario, filme);
+		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		// verification
 		error.checkThat(locacao.getValor(), is(5.0));
@@ -64,20 +60,20 @@ public class LocacaoServiceTest {
 		// scenery
 
 		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
 
 		// action
-		service.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, filmes);
 	}
 
 	@Test
 	public void User_isEmpty() throws MoveWithoutStockException {
 		// scenery
 
-		Filme filme = new Filme("Filme 1", 2, 5.0);
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
 		try {
-			service.alugarFilme(null, filme);
+			service.alugarFilme(null, filmes);
 			fail();
 		} catch (RentException e) {
 			assertThat(e.getMessage(), is("Usuario vazio"));
