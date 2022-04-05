@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.After;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,17 +37,15 @@ public class LocacaoServiceTest {
 		service = new LocacaoService();
 	}
 
-
 	@Test
-	public void testLocacao() throws Exception {
+	public void MustRentMovie() throws Exception {
 		// scenery
 
 		Usuario usuario = new Usuario("Usuario 1");
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
-
 		// action
-		Locacao locacao = service.alugarFilme(usuario, filmes);
+		Locacao locacao = service.rentMovie(usuario, filmes);
 
 		// verification
 		error.checkThat(locacao.getValor(), is(5.0));
@@ -56,24 +55,24 @@ public class LocacaoServiceTest {
 	}
 
 	@Test(expected = MoveWithoutStockException.class)
-	public void testMovieWithoutStock() throws Exception {
+	public void mustHappenExceptionToTheRentMovie_withoutStock() throws Exception {
 		// scenery
 
 		Usuario usuario = new Usuario("Usuario 1");
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
 
 		// action
-		service.alugarFilme(usuario, filmes);
+		service.rentMovie(usuario, filmes);
 	}
 
 	@Test
-	public void User_isEmpty() throws MoveWithoutStockException {
+	public void CanNotRentMovie_WithoutUser() throws MoveWithoutStockException {
 		// scenery
 
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
 		try {
-			service.alugarFilme(null, filmes);
+			service.rentMovie(null, filmes);
 			fail();
 		} catch (RentException e) {
 			assertThat(e.getMessage(), is("Usuario vazio"));
@@ -82,7 +81,7 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void Movie_isEmpty() throws MoveWithoutStockException, RentException {
+	public void CanNotRentMovie_withoutMovie() throws MoveWithoutStockException, RentException {
 		// scenery
 
 		Usuario usuario = new Usuario("Usuario 1");
@@ -90,7 +89,59 @@ public class LocacaoServiceTest {
 		exception.expect(RentException.class);
 		exception.expectMessage("Filme vazio");
 
-		service.alugarFilme(usuario, null);
+		service.rentMovie(usuario, null);
+	}
+
+	@Test
+	public void MustPay75PercentInMovie() throws MoveWithoutStockException, RentException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),
+				new Filme("Filme 3", 2, 4.0));
+
+		Locacao result = service.rentMovie(usuario, filmes);
+
+		assertThat(result.getValor(), is(11.0));
+
+	}
+
+	@Test
+	public void MustPay50PercentInMovie() throws MoveWithoutStockException, RentException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),
+				new Filme("Filme 3", 2, 4.0), new Filme("Filme 3", 2, 4.0));
+
+		Locacao result = service.rentMovie(usuario, filmes);
+
+		assertThat(result.getValor(), is(13.0));
+
+	}
+
+	@Test
+	public void MustPay25PercentInMovie() throws MoveWithoutStockException, RentException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),
+				new Filme("Filme 3", 2, 4.0), new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0)
+
+		);
+
+		Locacao result = service.rentMovie(usuario, filmes);
+
+		assertThat(result.getValor(), is(14.0));
+
+	}
+
+	@Test
+	public void MustPay100PercentInMovie() throws MoveWithoutStockException, RentException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),
+				new Filme("Filme 3", 2, 4.0), new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0),
+				new Filme("Filme 6", 2, 4.0)
+
+		);
+
+		Locacao result = service.rentMovie(usuario, filmes);
+
+		assertThat(result.getValor(), is(14.0));
 
 	}
 
