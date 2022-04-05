@@ -25,6 +25,7 @@ import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
 import br.ce.vkl.matchers.MatcherOwn;
 import br.ce.vkl.utils.DataUtils;
+import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 
@@ -110,6 +111,10 @@ public class LocacaoServiceTest {
 
 		assertThat(returnLocacao.getDataRetorno(), MatcherOwn.fallsIn(Calendar.MONDAY));
 		
+	}
+	
+	public static void main(String[] args) {
+		new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	}
 
 }
