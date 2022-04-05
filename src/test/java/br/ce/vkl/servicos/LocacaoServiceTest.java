@@ -23,7 +23,6 @@ import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
 import br.ce.vkl.matchers.MatcherOwn;
 import br.ce.vkl.utils.DataUtils;
-import junit.framework.Assert;
 
 public class LocacaoServiceTest {
 
@@ -54,9 +53,11 @@ public class LocacaoServiceTest {
 
 		// verification
 		error.checkThat(locacao.getValor(), is(5.0));
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),
-				is(true));
+//		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		error.checkThat(locacao.getDataLocacao(), MatcherOwn.isToday());
+//		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),
+//				is(true));
+		error.checkThat(locacao.getDataRetorno(), MatcherOwn.isTodayWithDifferenceOfDay(1));
 	}
 
 	@Test(expected = MoveWithoutStockException.class)
