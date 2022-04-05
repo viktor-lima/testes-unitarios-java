@@ -2,6 +2,7 @@ package br.ce.vkl.servicos;
 
 import static br.ce.vkl.utils.DataUtils.adicionarDias;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
 import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
+import br.ce.vkl.utils.DataUtils;
 
 public class LocacaoService {
 
@@ -55,6 +57,8 @@ public class LocacaoService {
 		// Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = adicionarDias(dataEntrega, 1);
+		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY))
+			dataEntrega = adicionarDias(dataEntrega, 1);
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...
