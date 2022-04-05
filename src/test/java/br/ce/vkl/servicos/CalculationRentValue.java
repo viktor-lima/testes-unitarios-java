@@ -14,6 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import br.ce.vkl.builders.MovieBuilder;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
@@ -37,12 +38,12 @@ public class CalculationRentValue {
 		service = new LocacaoService();
 	}
 
-	private static Filme filme1 = new Filme("Filme 1", 2, 4.0);
-	private static Filme filme2 = new Filme("Filme 2", 2, 4.0);
-	private static Filme filme3 = new Filme("Filme 3", 2, 4.0);
-	private static Filme filme4 = new Filme("Filme 4", 2, 4.0);
-	private static Filme filme5 = new Filme("Filme 5", 2, 4.0);
-	private static Filme filme6 = new Filme("Filme 6", 2, 4.0);
+	private static Filme filme1 = MovieBuilder.oneMovie().now();
+	private static Filme filme2 = MovieBuilder.oneMovie().now();
+	private static Filme filme3 = MovieBuilder.oneMovie().now();
+	private static Filme filme4 = MovieBuilder.oneMovie().now();
+	private static Filme filme5 = MovieBuilder.oneMovie().now();
+	private static Filme filme6 = MovieBuilder.oneMovie().now();
 
 	@Parameters(name = "{2}")
 	public static Collection<Object[]> getParameters() {

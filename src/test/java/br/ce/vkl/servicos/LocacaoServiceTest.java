@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import br.ce.vkl.builders.MovieBuilder;
+import br.ce.vkl.builders.UserBuilder;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
@@ -45,8 +47,8 @@ public class LocacaoServiceTest {
 		
 		// scenery
 		
-		Usuario usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+		Usuario usuario = UserBuilder.oneUser().now();
+		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().withValue(5.0).now());
 
 		// action
 		Locacao locacao = service.rentMovie(usuario, filmes);
@@ -61,8 +63,8 @@ public class LocacaoServiceTest {
 	public void mustHappenExceptionToTheRentMovie_withoutStock() throws Exception {
 		// scenery
 
-		Usuario usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
+		Usuario usuario = UserBuilder.oneUser().now();
+		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMoviewithoutStock().now());
 
 		// action
 		service.rentMovie(usuario, filmes);
@@ -72,7 +74,7 @@ public class LocacaoServiceTest {
 	public void CanNotRentMovie_WithoutUser() throws MoveWithoutStockException {
 		// scenery
 
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
 
 		try {
 			service.rentMovie(null, filmes);
@@ -87,7 +89,7 @@ public class LocacaoServiceTest {
 	public void CanNotRentMovie_withoutMovie() throws MoveWithoutStockException, RentException {
 		// scenery
 
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UserBuilder.oneUser().now();
 
 		exception.expect(RentException.class);
 		exception.expectMessage("Filme vazio");
@@ -100,8 +102,8 @@ public class LocacaoServiceTest {
 		
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
-		Usuario usuario = new Usuario("Usuario 1");
-		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
+		Usuario usuario = UserBuilder.oneUser().now();
+		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
 		
 		Locacao returnLocacao = service.rentMovie(usuario, filmes);
 		
