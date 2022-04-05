@@ -53,10 +53,7 @@ public class LocacaoServiceTest {
 
 		// verification
 		error.checkThat(locacao.getValor(), is(5.0));
-//		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 		error.checkThat(locacao.getDataLocacao(), MatcherOwn.isToday());
-//		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),
-//				is(true));
 		error.checkThat(locacao.getDataRetorno(), MatcherOwn.isTodayWithDifferenceOfDay(1));
 	}
 
@@ -108,8 +105,7 @@ public class LocacaoServiceTest {
 		
 		Locacao returnLocacao = service.rentMovie(usuario, filmes);
 		
-//		boolean isMonday = DataUtils.verificarDiaSemana(returnLocacao.getDataRetorno(), Calendar.MONDAY);
-//		Assert.assertTrue(isMonday);
+
 		assertThat(returnLocacao.getDataRetorno(), MatcherOwn.fallsIn(Calendar.MONDAY));
 		
 	}

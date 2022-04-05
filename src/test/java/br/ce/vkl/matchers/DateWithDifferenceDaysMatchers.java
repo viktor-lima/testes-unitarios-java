@@ -7,11 +7,11 @@ import org.hamcrest.TypeSafeMatcher;
 
 import br.ce.vkl.utils.DataUtils;
 
-public class DateDifferenceDaysMatchers extends TypeSafeMatcher<Date>{
+public class DateWithDifferenceDaysMatchers extends TypeSafeMatcher<Date>{
 	
 	private Integer qtdDays;
 
-	public DateDifferenceDaysMatchers(Integer qtdDays) {
+	public DateWithDifferenceDaysMatchers(Integer qtdDays) {
 		this.qtdDays = qtdDays;
 	}
 	

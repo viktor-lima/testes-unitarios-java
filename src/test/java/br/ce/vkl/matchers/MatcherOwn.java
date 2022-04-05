@@ -6,12 +6,12 @@ public class MatcherOwn {
 		return new DayWeekMatcher(dayWeek);
 	}
 
-	public static DateDifferenceDaysMatchers isTodayWithDifferenceOfDay(Integer qtdDays) {
-		return new DateDifferenceDaysMatchers(qtdDays);
+	public static DateWithDifferenceDaysMatchers isTodayWithDifferenceOfDay(Integer qtdDays) {
+		return new DateWithDifferenceDaysMatchers(qtdDays);
 	}
 
-	public static DateDifferenceDaysMatchers isToday() {
-		return new DateDifferenceDaysMatchers(0);
+	public static DateWithDifferenceDaysMatchers isToday() {
+		return new DateWithDifferenceDaysMatchers(0);
 	}
 
 }
