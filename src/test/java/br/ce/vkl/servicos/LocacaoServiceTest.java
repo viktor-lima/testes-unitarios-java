@@ -21,6 +21,7 @@ import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
 import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
+import br.ce.vkl.matchers.MatcherOwn;
 import br.ce.vkl.utils.DataUtils;
 import junit.framework.Assert;
 
@@ -106,8 +107,9 @@ public class LocacaoServiceTest {
 		
 		Locacao returnLocacao = service.rentMovie(usuario, filmes);
 		
-		boolean isMonday = DataUtils.verificarDiaSemana(returnLocacao.getDataRetorno(), Calendar.MONDAY);
-		Assert.assertTrue(isMonday);
+//		boolean isMonday = DataUtils.verificarDiaSemana(returnLocacao.getDataRetorno(), Calendar.MONDAY);
+//		Assert.assertTrue(isMonday);
+		assertThat(returnLocacao.getDataRetorno(), MatcherOwn.fallsIn(Calendar.MONDAY));
 		
 	}
 
