@@ -50,6 +50,12 @@ public class RentBuilder {
 		elemento.setDataRetorno(param);
 		return this;
 	}
+	
+	public RentBuilder atrasado() {
+		elemento.setDataRetorno(DataUtils.obterDataComDiferencaDias(-4));
+		elemento.setDataRetorno(DataUtils.obterDataComDiferencaDias(-2));
+		return this;
+	}
 
 	public RentBuilder comValor(Double param) {
 		elemento.setValor(param);

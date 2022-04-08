@@ -149,16 +149,20 @@ public class LocacaoServiceTest {
 	@Test
 	public void mustSendEmailForLateRentals() {
 		Usuario user = UserBuilder.oneUser().now();
+		Usuario user2 = UserBuilder.oneUser().withName("Usuario em dia").now();
+		Usuario user3 = UserBuilder.oneUser().withName("Outro atrasado").now();
 		List<Locacao> locacoes = Arrays.asList(
-				umLocacao()
-				.comUsuario(user)
-				.comDataRetorno(DataUtils.obterDataComDiferencaDias(-2))
-				.agora());
+				umLocacao().atrasado().comUsuario(user).agora(),
+				umLocacao().comUsuario(user2).agora(),
+				umLocacao().atrasado().comUsuario(user3).agora()
+				);
 		Mockito.when(dao.getPedingLeases()).thenReturn(locacoes);
 		
 		service.notifyDelays();
 		
 		Mockito.verify(emailService).notifyDelay(user);
+		Mockito.verify(emailService).notifyDelay(user3);
+		Mockito.verify(emailService, Mockito.never()).notifyDelay(user2);
 	}
 
 	

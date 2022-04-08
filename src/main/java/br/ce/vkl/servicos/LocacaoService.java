@@ -79,7 +79,8 @@ public class LocacaoService {
 	public void notifyDelays() {
 		List<Locacao> locacoes = dao.getPedingLeases();
 		for(Locacao locacao: locacoes) {
-			emailService.notifyDelay(locacao.getUsuario());
+			if(locacao.getDataRetorno().before(new Date()))
+				emailService.notifyDelay(locacao.getUsuario());
 		}
 	}
 
