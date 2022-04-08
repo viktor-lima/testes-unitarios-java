@@ -46,7 +46,7 @@ public class CalculationRentValue {
 
 	@Before
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		MockitoAnnotations.initMocks(this);
 	}
 
 	private static Filme filme1 = MovieBuilder.oneMovie().now();
