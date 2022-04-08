@@ -7,21 +7,23 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 import br.ce.vkl.builders.MovieBuilder;
 import br.ce.vkl.builders.RentBuilder;
@@ -34,8 +36,11 @@ import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
 import br.ce.vkl.exceptions.SPCService;
 import br.ce.vkl.matchers.MatcherOwn;
+import br.ce.vkl.runners.ParallelRunner;
 import br.ce.vkl.utils.DataUtils;
 
+
+@RunWith(ParallelRunner.class)
 public class LocacaoServiceTest {
 
 	@Rule
@@ -43,7 +48,7 @@ public class LocacaoServiceTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 
-	@InjectMocks
+	@InjectMocks @Spy
 	private LocacaoService service;
 	@Mock
 	private LocacaoDAO dao;
@@ -60,20 +65,23 @@ public class LocacaoServiceTest {
 	@Test
 	public void MustRentMovie() throws Exception {
 
-		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
 		// scenery
 
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().withValue(5.0).now());
 
+		Mockito.doReturn(DataUtils.obterData(8, 04, 2020)).when(service).getDate();
+		
 		// action
 		Locacao locacao = service.rentMovie(user, filmes);
 
 		// verification
-		error.checkThat(locacao.getValor(), is(5.0));
-		error.checkThat(locacao.getDataLocacao(), MatcherOwn.isToday());
-		error.checkThat(locacao.getDataRetorno(), MatcherOwn.isTodayWithDifferenceOfDay(1));
+		error.checkThat(locacao.getValor(), is(CoreMatchers.equalTo( 5.0)));
+//		error.checkThat(locacao.getDataLocacao(), MatcherOwn.isToday());
+//		error.checkThat(locacao.getDataRetorno(), MatcherOwn.isTodayWithDifferenceOfDay(1));
+		
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(8, 04, 2020)),is(false));
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(10, 04, 2020)),is(false));
 	}
 
 	@Test(expected = MoveWithoutStockException.class)
@@ -115,13 +123,14 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void mustGiveBackMovieInMondayToTheRentInSunday() throws MoveWithoutStockException, RentException {
+	public void mustGiveBackMovieInMondayToTheRentInSunday() throws Exception {
 
-		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
+		
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
-
+		
+		Mockito.doReturn(DataUtils.obterData(11, 04, 2020)).when(service).getDate();
+		
 		Locacao returnLocacao = service.rentMovie(user, filmes);
 
 		assertThat(returnLocacao.getDataRetorno(), MatcherOwn.fallsIn(Calendar.MONDAY));

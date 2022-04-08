@@ -46,7 +46,7 @@ public class LocacaoService {
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filmes);
 		locacao.setUsuario(usuario);
-		locacao.setDataLocacao(new Date());
+		locacao.setDataLocacao(getDate());
 		Double totalValue = 0d;
 		for (int i = 0; i < filmes.size(); i++) {
 			Filme filme = filmes.get(i);
@@ -70,7 +70,7 @@ public class LocacaoService {
 		locacao.setValor(totalValue);
 
 		// Entrega no dia seguinte
-		Date dataEntrega = new Date();
+		Date dataEntrega = getDate();
 		dataEntrega = adicionarDias(dataEntrega, 1);
 		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY))
 			dataEntrega = adicionarDias(dataEntrega, 1);
@@ -81,11 +81,15 @@ public class LocacaoService {
 
 		return locacao;
 	}
+
+	protected Date getDate() {
+		return new Date();
+	}
 	
 	public void notifyDelays() {
 		List<Locacao> locacoes = dao.getPedingLeases();
 		for(Locacao locacao: locacoes) {
-			if(locacao.getDataRetorno().before(new Date()))
+			if(locacao.getDataRetorno().before(getDate()))
 				emailService.notifyDelay(locacao.getUsuario());
 		}
 	}
@@ -94,7 +98,7 @@ public class LocacaoService {
 		Locacao newLocacao = new Locacao();
 		newLocacao.setUsuario(locacao.getUsuario());
 		newLocacao.setFilme(locacao.getFilme());
-		newLocacao.setDataLocacao(new Date());
+		newLocacao.setDataLocacao(getDate());
 		newLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(days));
 		newLocacao.setValor(locacao.getValor() * days);
 		dao.save(newLocacao);
