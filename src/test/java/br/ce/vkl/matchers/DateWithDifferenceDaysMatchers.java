@@ -1,5 +1,7 @@
 package br.ce.vkl.matchers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hamcrest.Description;
@@ -15,9 +17,10 @@ public class DateWithDifferenceDaysMatchers extends TypeSafeMatcher<Date>{
 		this.qtdDays = qtdDays;
 	}
 	
-	public void describeTo(Description arg0) {
-		// TODO Auto-generated method stub
-		
+	public void describeTo(Description desc) {
+		Date expetedDate = DataUtils.obterDataComDiferencaDias(qtdDays);
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		desc.appendText(format.format(expetedDate));
 	}
 
 	@Override

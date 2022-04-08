@@ -17,12 +17,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import br.ce.vkl.builders.MovieBuilder;
+import br.ce.vkl.builders.RentBuilder;
 import br.ce.vkl.builders.UserBuilder;
 import br.ce.vkl.daos.LocacaoDAO;
 import br.ce.vkl.entidades.Filme;
@@ -169,15 +171,28 @@ public class LocacaoServiceTest {
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
 		
 		Mockito.when(spc.isNegative(user)).thenThrow(new Exception("Falha catastrófica"));
-		
 		//v
 		exception.expect(RentException.class);
-		exception.expectMessage("Problemas com SPC, tente novamente");
-		
+		exception.expectMessage("Problemas com SPC, tente novamente");	
 		//a
 		service.rentMovie(user, filmes);
+	}
+	
+	@Test
+	public void mustReturnOneRent() {
+		//c
+			Locacao locacao = RentBuilder.umLocacao().agora();
 		
-		
+		//a
+			service.ExtendRent(locacao, 3);
+		//v
+			ArgumentCaptor<Locacao> argCaptor = ArgumentCaptor.forClass(Locacao.class);
+			Mockito.verify(dao).save(argCaptor.capture());
+			Locacao locacaoReturned = argCaptor.getValue();
+			
+			error.checkThat(locacaoReturned.getValor(), is(12.0));
+			error.checkThat(locacaoReturned.getDataLocacao(), is(MatcherOwn.isToday()));
+			error.checkThat(locacaoReturned.getDataRetorno(), is(MatcherOwn.isTodayWithDifferenceOfDay(3)));
 	}
 
 }

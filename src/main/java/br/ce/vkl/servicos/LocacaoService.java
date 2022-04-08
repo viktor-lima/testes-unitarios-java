@@ -89,6 +89,16 @@ public class LocacaoService {
 				emailService.notifyDelay(locacao.getUsuario());
 		}
 	}
+	
+	public void ExtendRent(Locacao locacao, int days) {
+		Locacao newLocacao = new Locacao();
+		newLocacao.setUsuario(locacao.getUsuario());
+		newLocacao.setFilme(locacao.getFilme());
+		newLocacao.setDataLocacao(new Date());
+		newLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(days));
+		newLocacao.setValor(locacao.getValor() * days);
+		dao.save(newLocacao);
+	}
 
 
 }
