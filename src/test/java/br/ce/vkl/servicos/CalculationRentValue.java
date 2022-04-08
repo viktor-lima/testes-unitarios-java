@@ -13,7 +13,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import br.ce.vkl.builders.MovieBuilder;
 import br.ce.vkl.daos.LocacaoDAO;
@@ -27,8 +30,13 @@ import br.ce.vkl.exceptions.SPCService;
 @RunWith(Parameterized.class)
 public class CalculationRentValue {
 
+	@InjectMocks
 	private LocacaoService service;
-
+	@Mock
+	private LocacaoDAO dao;
+	@Mock
+	private SPCService spc;
+	
 	@Parameter
 	public List<Filme> filmes;
 	@Parameter(value = 1)
@@ -38,11 +46,7 @@ public class CalculationRentValue {
 
 	@Before
 	public void setup() {
-		service = new LocacaoService();
-		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
-		service.setLocacaoDAO(dao);
-		SPCService spc = Mockito.mock(SPCService.class);
-		service.setSPCService(spc);
+		MockitoAnnotations.openMocks(this);
 	}
 
 	private static Filme filme1 = MovieBuilder.oneMovie().now();
