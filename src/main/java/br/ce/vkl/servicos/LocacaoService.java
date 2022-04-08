@@ -6,14 +6,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.ce.vkl.daos.LocacaoDAO;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
 import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
+import br.ce.vkl.exceptions.SPCService;
 import br.ce.vkl.utils.DataUtils;
 
 public class LocacaoService {
+	
+	private LocacaoDAO dao;
+	private SPCService spcService;
+	private EmailService emailService;
 
 	public Locacao rentMovie(Usuario usuario, List<Filme> filmes) throws MoveWithoutStockException, RentException {
 
@@ -27,6 +33,9 @@ public class LocacaoService {
 			if (filme.getEstoque() == 0)
 				throw new MoveWithoutStockException();
 		}
+		
+		if(spcService.isNegative(usuario))
+			throw new RentException("Usu·rio Negativado");
 
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filmes);
@@ -62,9 +71,28 @@ public class LocacaoService {
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...
-		// TODO adicionar m√©todo para salvar
+		dao.save(locacao);
 
 		return locacao;
 	}
+	
+	public void notifyDelays() {
+		List<Locacao> locacoes = dao.getPedingLeases();
+		for(Locacao locacao: locacoes) {
+			emailService.notifyDelay(locacao.getUsuario());
+		}
+	}
+
+	public void setLocacaoDAO(LocacaoDAO dao) {
+		this.dao = dao;
+	}
+	public void setSPCService(SPCService spc) {
+		this.spcService = spc;
+	}
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
+	}
+	
+	
 
 }

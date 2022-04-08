@@ -13,13 +13,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import br.ce.vkl.builders.MovieBuilder;
+import br.ce.vkl.daos.LocacaoDAO;
 import br.ce.vkl.entidades.Filme;
 import br.ce.vkl.entidades.Locacao;
 import br.ce.vkl.entidades.Usuario;
 import br.ce.vkl.exceptions.MoveWithoutStockException;
 import br.ce.vkl.exceptions.RentException;
+import br.ce.vkl.exceptions.SPCService;
 
 @RunWith(Parameterized.class)
 public class CalculationRentValue {
@@ -36,6 +39,10 @@ public class CalculationRentValue {
 	@Before
 	public void setup() {
 		service = new LocacaoService();
+		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
+		SPCService spc = Mockito.mock(SPCService.class);
+		service.setSPCService(spc);
 	}
 
 	private static Filme filme1 = MovieBuilder.oneMovie().now();
