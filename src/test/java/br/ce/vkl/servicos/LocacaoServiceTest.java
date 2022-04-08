@@ -133,7 +133,7 @@ public class LocacaoServiceTest {
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
 		
-		Mockito.when(spc.isNegative(user)).thenReturn(true);
+		Mockito.when(spc.isNegative(Mockito.any(Usuario.class))).thenReturn(true);
 		
 		
 		try {
@@ -154,14 +154,16 @@ public class LocacaoServiceTest {
 		List<Locacao> locacoes = Arrays.asList(
 				umLocacao().atrasado().comUsuario(user).agora(),
 				umLocacao().comUsuario(user2).agora(),
+				umLocacao().atrasado().comUsuario(user3).agora(),
 				umLocacao().atrasado().comUsuario(user3).agora()
 				);
 		Mockito.when(dao.getPedingLeases()).thenReturn(locacoes);
 		
 		service.notifyDelays();
 		
+		Mockito.verify(emailService, Mockito.times(3)).notifyDelay(Mockito.any(Usuario.class));
 		Mockito.verify(emailService).notifyDelay(user);
-		Mockito.verify(emailService).notifyDelay(user3);
+		Mockito.verify(emailService, Mockito.atLeastOnce()).notifyDelay(user3);
 		Mockito.verify(emailService, Mockito.never()).notifyDelay(user2);
 	}
 
