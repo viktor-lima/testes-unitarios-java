@@ -33,9 +33,15 @@ public class LocacaoService {
 			if (filme.getEstoque() == 0)
 				throw new MoveWithoutStockException();
 		}
-		
-		if(spcService.isNegative(usuario))
-			throw new RentException("Usuário Negativado");
+		boolean negative;
+		try {
+			negative =  spcService.isNegative(usuario);
+		}
+		catch(Exception e) {
+			throw new RentException("Problemas com SPC, tente novamente");
+		}
+		if(negative)
+			throw new RentException("Usuário Negativado");			
 
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filmes);

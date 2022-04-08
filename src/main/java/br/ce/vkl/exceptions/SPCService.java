@@ -4,6 +4,6 @@ import br.ce.vkl.entidades.Usuario;
 
 public interface SPCService {
 
-	boolean isNegative(Usuario usuario);
+	boolean isNegative(Usuario usuario) throws Exception;
 	
 }

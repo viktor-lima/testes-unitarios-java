@@ -57,11 +57,11 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void MustRentMovie() throws Exception {
-		
+
 		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
+
 		// scenery
-		
+
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().withValue(5.0).now());
 
@@ -111,37 +111,35 @@ public class LocacaoServiceTest {
 
 		service.rentMovie(user, null);
 	}
-	
+
 	@Test
 	public void mustGiveBackMovieInMondayToTheRentInSunday() throws MoveWithoutStockException, RentException {
-		
+
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
+
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
-		
+
 		Locacao returnLocacao = service.rentMovie(user, filmes);
-		
 
 		assertThat(returnLocacao.getDataRetorno(), MatcherOwn.fallsIn(Calendar.MONDAY));
-		
+
 	}
-	
+
 	@Test
-	public void mustNotRentMovieForNegativadedSPC() throws MoveWithoutStockException  {
+	public void mustNotRentMovieForNegativadedSPC() throws Exception  {
 		Usuario user = UserBuilder.oneUser().now();
 		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
-		
+
 		Mockito.when(spc.isNegative(Mockito.any(Usuario.class))).thenReturn(true);
-		
-		
+
 		try {
 			service.rentMovie(user, filmes);
 			Assert.fail();
 		} catch (RentException e) {
 			Assert.assertThat(e.getMessage(), is("Usuário Negativado"));
-		}	
-		
+		}
+
 		Mockito.verify(spc).isNegative(user);
 	}
 
@@ -152,31 +150,34 @@ public class LocacaoServiceTest {
 		Usuario user3 = UserBuilder.oneUser().withName("Outro atrasado").now();
 		List<Locacao> locacoes = Arrays.asList(
 				umLocacao().atrasado().comUsuario(user).agora(),
-				umLocacao().comUsuario(user2).agora(),
-				umLocacao().atrasado().comUsuario(user3).agora(),
-				umLocacao().atrasado().comUsuario(user3).agora()
-				);
+				umLocacao().comUsuario(user2).agora(), umLocacao().atrasado().comUsuario(user3).agora(),
+				umLocacao().atrasado().comUsuario(user3).agora());
 		Mockito.when(dao.getPedingLeases()).thenReturn(locacoes);
-		
+
 		service.notifyDelays();
-		
+
 		Mockito.verify(emailService, Mockito.times(3)).notifyDelay(Mockito.any(Usuario.class));
 		Mockito.verify(emailService).notifyDelay(user);
 		Mockito.verify(emailService, Mockito.atLeastOnce()).notifyDelay(user3);
 		Mockito.verify(emailService, Mockito.never()).notifyDelay(user2);
 	}
 
-	
+	@Test
+	public void shouldHandleErrorCPS() throws Exception {
+		//c
+		Usuario user = UserBuilder.oneUser().now();
+		List<Filme> filmes = Arrays.asList(MovieBuilder.oneMovie().now());
+		
+		Mockito.when(spc.isNegative(user)).thenThrow(new Exception("Falha catastrófica"));
+		
+		//v
+		exception.expect(RentException.class);
+		exception.expectMessage("Problemas com SPC, tente novamente");
+		
+		//a
+		service.rentMovie(user, filmes);
+		
+		
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
